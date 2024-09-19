@@ -25,13 +25,7 @@ class ActorTable extends Table
      * @var null|array  of integers: the ids of the events for this event
      * (only used when editing an event)
      */
-    private $eventIds = null;
-
-    /**
-     * @var null|array  of events for this event
-     * (only used when displaying an event)
-     */
-    private $events = null;
+    private $event_ids = null;
 
     /**
 	 * Constructor
@@ -45,69 +39,6 @@ class ActorTable extends Table
 		parent::__construct('#__eventschedule_actors', 'id', $db);
 	}
 
-    /**
-     * Get the events for this actor.
-     * @return array
-     */
-    public function getEvents():array
-    {
-        if (is_null($this->events)) {
-            $db    = $this->getDbo();
-            $query = $db->getQuery(true)
-                ->select($db->quoteName('event') . '.*')
-                ->from($db->quoteName('#__eventschedule_actor_event', 'junction'))
-                ->join('LEFT',
-                    $db->quoteName('#__eventschedule_events', 'event'),
-                    $db->quoteName('junction.event_id') . ' = ' . $db->quoteName('event.id'))
-                ->where($db->quoteName('actor_id') . ' = :thisId')
-                ->order($db->quoteName('id') . ' ASC')
-                ->bind(':thisId', $this->id, ParameterType::INTEGER);
-
-            $this->events = $db->setQuery($query)->loadObjectList() ?: [];
-        }
-
-        return $this->events;
-    }
-
-    /**
-     * Get the eventIds for this actor.
-     * @return array
-     */
-    public function getEventIds():array
-    {
-        if (is_null($this->eventIds)) {
-            $db    = $this->getDbo();
-            $query = $db->getQuery(true)
-                ->select($db->quoteName('event_id'))
-                ->from($db->quoteName('#__eventschedule_actor_event', 'junction'))
-                ->where($db->quoteName('actor_id') . ' = :thisId')
-                ->order($db->quoteName('event_id') . ' ASC')
-                ->bind(':thisId', $this->id, ParameterType::INTEGER);
-
-            $this->eventIds = $db->setQuery($query)->loadColumn() ?: [];
-        }
-
-        return $this->eventIds;
-    }
-
-    /**
-     * Get the eventIds for this actor as a comma-separated string of ids.
-     * @return string
-     */
-    public function getEventIdsString():string
-    {
-        return implode(',', $this->getEventIds());
-    }
-
-    /**
-     * Set the eventIds for this actor from a comma-separated string of ids.
-     * @param $eventIdsString
-     * @return void
-     */
-    public function setEventIds($eventIdsString):void
-    {
-        $this->eventIds = explode(',',$eventIdsString);
-    }
 
     /**
      * Method to bind the actor and events data.
@@ -123,8 +54,8 @@ class ActorTable extends Table
         $return = parent::bind($array, $ignore);
 
         // Set the eventIds from the comma separated string of event-ids
-        if ($return && array_key_exists('event_ids', $array[])) {
-            $this->setEventIds($array['event_ids']);
+        if ($return && array_key_exists('event_ids', $array)) {
+            $this->event_ids = $array['event_ids'];
         }
 
         return $return;
@@ -152,8 +83,8 @@ class ActorTable extends Table
 
         // Joomla core comment: @todo: This is a dumb way to handle the groups.
         // Store eventIds locally so as to not update directly.
-        $eventIds = $this->eventIds;
-        unset($this->eventIds);
+        $eventIds = $this->event_ids;
+        unset($this->event_ids);
 
         // Insert or update the object based on presence of a key value.
         if ($key) {
@@ -165,12 +96,12 @@ class ActorTable extends Table
         }
 
         // Reset eventIds to the local object.
-        $this->eventIds = $eventIds;
+        $this->event_ids = $eventIds;
 
         $query = $this->_db->getQuery(true);
 
         // Store the eventId data if the actor data was saved.
-        if (\is_array($this->eventIds) && \count($this->eventIds)) {
+        if (\is_array($this->event_ids) && \count($this->event_ids)) {
             $actorId = (int) $this->id;
 
             // Grab all eventIds for the actor, as is stored in the junction table
@@ -189,9 +120,9 @@ class ActorTable extends Table
                 $deleteEventIds = [];
 
                 foreach ($eventIdsInDb as $storedEventId) {
-                    if (\in_array($storedEventId, $this->eventIds)) {
-                        // It already exists, no action required
-                        unset($eventIds[$storedEventId]);
+                    if (\in_array($storedEventId, $this->event_ids)) {
+                        // It already exists, no action required, so remove it from $eventIds
+                        $eventIds = array_diff($eventIds,[$storedEventId]);
                     } else {
                         $deleteEventIds[] = (int) $storedEventId;
                     }

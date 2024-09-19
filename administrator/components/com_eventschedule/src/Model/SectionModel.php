@@ -15,6 +15,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\Model\AdminModel;
 use Joomla\CMS\Form\Form;
+use Joomla\Database\ParameterType;
 
 /**
  * Item Model for a Section.
@@ -27,6 +28,12 @@ class SectionModel extends AdminModel
 	 * @var    string
 	 */
 	public $typeAlias = 'com_eventschedule.section';
+
+    /**
+     * @var null|array  of containers for this section
+     * (only used when displaying a section)
+     */
+    private $containers = null;
 
 	/**
 	 * Method to get the Section form.
@@ -49,6 +56,26 @@ class SectionModel extends AdminModel
 		return $form;
 	}
 
+    /**
+     * Get the containerIds for this section.
+     * @param int|null $eventId
+     * @return array
+     */
+    public function getContainerIds(int $eventId = null):array
+    {
+        $db    = $this->getDatabase();
+        $query = $db->getQuery(true)
+            ->select($db->quoteName('container_id'))
+            ->from($db->quoteName('#__eventschedule_container_section', 'junction'))
+            ->where($db->quoteName('section_id') . ' = :thisId')
+            ->order($db->quoteName('container_id') . ' ASC')
+            ->bind(':thisId', $eventId, ParameterType::INTEGER);
+
+        $container_ids = $db->setQuery($query)->loadColumn() ?: [];
+
+        return $container_ids;
+    }
+
 	/**
 	 * Method to get the data that should be injected in the form.
 	 *
@@ -66,12 +93,36 @@ class SectionModel extends AdminModel
 			$data = $this->getItem();
 
             // Add foreign key ids (as an array)
-            $data->container_ids = $this->getTable()->getContainerIds($data->id);
+            $data->container_ids = $this->getContainerIds($data->id);
 		}
-
 
 		return $data;
 	}
+
+    /**
+     * Get the containers for this section.
+     * @param int|null $eventId
+     * @return array
+     */
+    public function getContainers(int $eventId = null):array
+    {
+        if (is_null($this->containers)) {
+            $db    = $this->getDbo();
+            $query = $db->getQuery(true)
+                ->select($db->quoteName('container') . '.*')
+                ->from($db->quoteName('#__eventschedule_container_section', 'junction'))
+                ->join('LEFT',
+                    $db->quoteName('#__eventschedule_containers', 'container'),
+                    $db->quoteName('junction.container_id') . ' = ' . $db->quoteName('container.id'))
+                ->where($db->quoteName('section_id') . ' = :thisId')
+                ->order($db->quoteName('id') . ' ASC')
+                ->bind(':thisId', $eventId, ParameterType::INTEGER);
+
+            $this->containers = $db->setQuery($query)->loadObjectList() ?: [];
+        }
+
+        return $this->containers;
+    }
 
 	// Override getTable to be sure the right table name is used (especially when page name is different from entity name).
 	public function getTable($name = 'Section', $prefix = '', $options = [])

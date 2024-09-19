@@ -26,12 +26,6 @@ class SectionTable extends Table
      * (only used when editing a section)
      */
     private $container_ids = null;
-
-    /**
-     * @var null|array  of containers for this section
-     * (only used when displaying a section)
-     */
-    private $containers = null;
     
 	/**
 	 * Constructor
@@ -44,55 +38,6 @@ class SectionTable extends Table
 
 		parent::__construct('#__eventschedule_sections', 'id', $db);
 	}
-
-    /**
-     * Get the containers for this section. todo: put in (Item)Model
-     * @return array
-     */
-    public function getContainers():array
-    {
-        if (is_null($this->containers)) {
-            $db    = $this->getDbo();
-            $query = $db->getQuery(true)
-                ->select($db->quoteName('container') . '.*')
-                ->from($db->quoteName('#__eventschedule_container_section', 'junction'))
-                ->join('LEFT',
-                    $db->quoteName('#__eventschedule_containers', 'container'),
-                    $db->quoteName('junction.container_id') . ' = ' . $db->quoteName('container.id'))
-                ->where($db->quoteName('section_id') . ' = :thisId')
-                ->order($db->quoteName('id') . ' ASC')
-                ->bind(':thisId', $this->id, ParameterType::INTEGER);
-
-            $this->containers = $db->setQuery($query)->loadObjectList() ?: [];
-        }
-
-        return $this->containers;
-    }
-
-    /**
-     * Get the containerIds for this section. todo: put in (Admin)Model
-     * @return array
-     */
-    public function getContainerIds(int $event_id = null):array
-    {
-        if (is_null($this->container_ids)) {
-            if (is_null($event_id)) {
-                $event_id = $this->id;
-            }
-
-            $db    = $this->getDbo();
-            $query = $db->getQuery(true)
-                ->select($db->quoteName('container_id'))
-                ->from($db->quoteName('#__eventschedule_container_section', 'junction'))
-                ->where($db->quoteName('section_id') . ' = :thisId')
-                ->order($db->quoteName('container_id') . ' ASC')
-                ->bind(':thisId', $event_id, ParameterType::INTEGER);
-
-            $this->container_ids = $db->setQuery($query)->loadColumn() ?: [];
-        }
-
-        return $this->container_ids;
-    }
 
     /**
      * Method to bind the section and containers data.
@@ -175,8 +120,8 @@ class SectionTable extends Table
 
                 foreach ($containerIdsInDb as $storedContainerId) {
                     if (\in_array($storedContainerId, $this->container_ids)) {
-                        // It already exists, no action required
-                        unset($containerIds[$storedContainerId]);
+                        // It already exists, no action required, so remove it from $containerIds
+                        $containerIds = array_diff($containerIds,[$storedContainerId]);
                     } else {
                         $deleteContainerIds[] = (int) $storedContainerId;
                     }

@@ -56,22 +56,27 @@ if ($saveOrder && !empty($this->items)) {
                             </th>
                             <th scope="col" style="width:1%" class="text-center d-none d-md-table-cell">
 		                        <?php echo HTMLHelper::_('searchtools.sort',
-		                        'COM_EVENTSCHEDULE_TABLE_EVENT_TABLEHEAD_DESCRIPTION', $listDirn, $listOrder);
+		                        'COM_EVENTSCHEDULE_TABLE_EVENT_TABLEHEAD_SHORT_DESCRIPTION', $listDirn, $listOrder);
                                 ?>
                             </th>
                             <th scope="col" style="width:1%" class="text-center d-none d-md-table-cell">
 		                        <?php echo HTMLHelper::_('searchtools.sort',
-		                        'COM_EVENTSCHEDULE_TABLE_EVENT_TABLEHEAD_DURATION (MINUTES)', $listDirn, $listOrder);
+		                        'COM_EVENTSCHEDULE_TABLE_EVENT_TABLEHEAD_DURATION', $listDirn, $listOrder);
                                 ?>
                             </th>
                             <th scope="col" style="width:1%" class="text-center d-none d-md-table-cell">
 		                        <?php echo HTMLHelper::_('searchtools.sort',
-		                        'COM_EVENTSCHEDULE_TABLE_EVENT_TABLEHEAD_TAGS', $listDirn, $listOrder);
+		                        'COM_EVENTSCHEDULE_TABLE_EVENT_TABLEHEAD_EVENT_TYPE', $listDirn, $listOrder);
                                 ?>
                             </th>
                             <th scope="col" style="width:1%" class="text-center d-none d-md-table-cell">
 		                        <?php echo HTMLHelper::_('searchtools.sort',
-		                        'COM_EVENTSCHEDULE_TABLE_EVENT_TABLEHEAD_ARTICLE', $listDirn, $listOrder);
+		                        'COM_EVENTSCHEDULE_TABLE_EVENT_TABLEHEAD_ACTORS', $listDirn, $listOrder);
+                                ?>
+                            </th>
+                            <th scope="col" style="width:1%" class="text-center d-none d-md-table-cell">
+		                        <?php echo HTMLHelper::_('searchtools.sort',
+		                        'COM_EVENTSCHEDULE_TABLE_EVENT_TABLEHEAD_LOCATORS', $listDirn, $listOrder);
                                 ?>
                             </th>
                         </tr>
@@ -89,20 +94,23 @@ if ($saveOrder && !empty($this->items)) {
                                 <td>
                                 <a class="hasTooltip" href="<?php
                                     echo Route::_('index.php?option=com_eventschedule&task=event.edit&id=' . (int) $item->id); ?>"
-                                    title="<?php echo Text::_('JACTION_EDIT'); ?> <?php echo $this->escape(addslashes($item->name)); ?>">
-		                            <?php //echo $editIcon; ?><?php echo $this->escape($item->name); ?></a>
+                                    title="<?php echo Text::_('JACTION_EDIT'); ?> <?php echo $this->escape(addslashes($item->event_name)); ?>">
+		                            <?php //echo $editIcon; ?><?php echo $this->escape($item->event_name); ?></a>
                                 </td>
                                  <td class="text-center d-none d-md-table-cell">
-	                                <?php echo $item->description; ?>
+	                                <?php echo $item->short_description; ?>
                                 </td>
                                  <td class="text-center d-none d-md-table-cell">
-	                                <?php echo $item->duration (minutes); ?>
+	                                <?php echo $item->duration; ?>
                                 </td>
                                  <td class="text-center d-none d-md-table-cell">
-	                                <?php echo $item->tags; ?>
+	                                <?php echo $item->event_type; ?>
                                 </td>
                                  <td class="text-center d-none d-md-table-cell">
-	                                <?php echo $item->article; ?>
+	                                <?php //echo $item->actors; ?>
+                                </td>
+                                 <td class="text-center d-none d-md-table-cell">
+	                                <?php //echo $item->locators; ?>
                                 </td>
  
                             </tr>

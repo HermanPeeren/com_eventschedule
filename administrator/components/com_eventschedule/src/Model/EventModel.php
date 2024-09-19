@@ -29,6 +29,13 @@ class EventModel extends AdminModel
 	 */
 	public $typeAlias = 'com_eventschedule.event';
 
+    /**
+     * @var null|array of actors for this event
+     * (only used when displaying an event)
+     *  = null if not fetched from db
+     */
+    private $actors = null;
+
 	/**
 	 * Method to get the Event form.
 	 *
@@ -52,10 +59,10 @@ class EventModel extends AdminModel
 
     /**
      * Get the actor_ids for this event.
-     * @param int|null $event_id
+     * @param int|null $eventId
      * @return array
      */
-    public function getActorIds(int $event_id = null):array
+    public function getActorIds(int $eventId = null):array
     {
         $db    = $this->getDatabase();
         $query = $db->getQuery(true)
@@ -63,7 +70,7 @@ class EventModel extends AdminModel
             ->from($db->quoteName('#__eventschedule_actor_event', 'junction'))
             ->where($db->quoteName('event_id') . ' = :thisId')
             ->order($db->quoteName('actor_id') . ' ASC')
-            ->bind(':thisId', $event_id, ParameterType::INTEGER);
+            ->bind(':thisId', $eventId, ParameterType::INTEGER);
 
         $actor_ids = $db->setQuery($query)->loadColumn() ?: [];      
 
@@ -92,6 +99,31 @@ class EventModel extends AdminModel
 
 		return $data;
 	}
+
+    /**
+     * Get the actors for this event. Only needed for detail-display.
+     * @param int|null $eventId
+     * @return array of Actor-objects
+     */
+    public function getActors(int $eventId = null):array
+    {
+        if (is_null($this->actors)) {
+            $db    = $this->getDatabase();
+            $query = $db->getQuery(true)
+                ->select($db->quoteName('actor') . '.*')
+                ->from($db->quoteName('#__eventschedule_actor_event', 'junction'))
+                ->join('LEFT',
+                    $db->quoteName('#__eventschedule_actors', 'actor'),
+                    $db->quoteName('junction.actor_id') . ' = ' . $db->quoteName('actor.id'))
+                ->where($db->quoteName('event_id') . ' = :thisId')
+                ->order($db->quoteName('actor_name') . ' ASC')
+                ->bind(':thisId', $eventId, ParameterType::INTEGER);
+
+            $this->actors = $db->setQuery($query)->loadObjectList() ?: [];
+        }
+
+        return $this->actors;
+    }
 
 	// Override getTable to be sure the right table name is used (especially when page name is different from entity name).
 	public function getTable($name = 'Event', $prefix = '', $options = [])

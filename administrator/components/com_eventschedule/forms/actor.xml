@@ -25,7 +25,7 @@
     />
 
     <field
-            name="events"
+            name="event_ids"
             type="sql"
             query="SELECT id, `event_name` FROM `#__eventschedule_events`"
             multiple="multiple"

@@ -30,7 +30,7 @@
             value_field="section_name"
             label="COM_EVENTSCHEDULE_LOCATOR_FIELD_SECTION_LABEL"
             description="COM_EVENTSCHEDULE_LOCATOR_FIELD_SECTION_DESC"
-            context="eventschedule"
+            context="event"
     >
       <option value="0">-First select a container-</option>
     </field>

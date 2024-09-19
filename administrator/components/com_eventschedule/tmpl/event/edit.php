@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    EventSchedule
- * @subpackage eventschedule
+ * @subpackage com_eventschedule
  * @version    1.0.0
  *
  * @copyright  Herman Peeren, Yepr
@@ -37,30 +37,15 @@ $layout  = 'edit';
             <div class="col-md-9">
                 <div class="row">
                     <div class="col-md-6">
-
-                                                <?php echo $this->getForm()->renderField('name'); ?>
-                                                <?php echo $this->getForm()->renderField('description'); ?>
-                                                <?php echo $this->getForm()->renderField('duration (minutes)'); ?>
-                                                <?php echo $this->getForm()->renderField('tags'); ?>
-                                                <?php echo $this->getForm()->renderField('article'); ?>
-                        
-                        <?php //echo $this->form->getInput('id'); ?>
+                        <?php echo $this->getForm()->renderField('event_name'); ?>
+                        <?php echo $this->getForm()->renderField('event_type_id'); ?>
+                        <?php echo $this->getForm()->renderField('short_description'); ?>
+                        <?php echo $this->getForm()->renderField('long_description'); ?>
+                        <?php echo $this->getForm()->renderField('duration'); ?>
+                        <?php echo $this->getForm()->renderField('actor_ids'); ?>
+                        <?php echo $this->getForm()->renderField('locators'); ?>
                     </div>
                 </div>
-            </div>
-        </div>
-		<?php echo HTMLHelper::_('uitab.endTab'); ?>
-
-
-		<?php echo HTMLHelper::_('uitab.addTab', 'myTab', 'publishing', Text::_('JGLOBAL_FIELDSET_PUBLISHING')); ?>
-        <div class="row">
-            <div class="col-md-6">
-                <!--  <fieldset id="fieldset-publishingdata" class="options-form">-->
-                <!-- <legend><?php /*echo Text::_('JGLOBAL_FIELDSET_PUBLISHING'); */?></legend>-->
-                <div>
-                    <?php //echo LayoutHelper::render('joomla.edit.publishingdata', $this); ?>
-                </div>
-                <!--/fieldset>-->
             </div>
         </div>
 		<?php echo HTMLHelper::_('uitab.endTab'); ?>
@@ -68,5 +53,6 @@ $layout  = 'edit';
 		<?php echo HTMLHelper::_('uitab.endTabSet'); ?>
     </div>
     <input type="hidden" name="task" value="">
+    <input type="hidden" name="id" value="<?php echo $this->form->getValue('id'); ?>">
 	<?php echo HTMLHelper::_('form.token'); ?>
 </form>

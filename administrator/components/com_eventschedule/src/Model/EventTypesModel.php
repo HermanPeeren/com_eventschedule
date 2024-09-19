@@ -1,7 +1,7 @@
 <?php
 /**
  * @package    EventSchedule
- * @subpackage eventschedule
+ * @subpackage com_eventschedule
  * @version    1.0.0
  *
  * @copyright  Herman Peeren, Yepr
@@ -16,9 +16,9 @@ use Joomla\CMS\MVC\Model\ListModel;
 use Joomla\Database\QueryInterface;
 
 /**
- * Methods supporting a list of Event_Type records.
+ * Methods supporting a list of EventType records.
  */
-class Event_TypeModel extends ListModel
+class EventTypesModel extends ListModel
 {
     /**
 	 * Constructor.

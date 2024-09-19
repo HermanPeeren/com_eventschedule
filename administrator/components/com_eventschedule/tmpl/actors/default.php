@@ -79,14 +79,14 @@ if ($saveOrder && !empty($this->items)) {
                                 <td>
                                 <a class="hasTooltip" href="<?php
                                     echo Route::_('index.php?option=com_eventschedule&task=actor.edit&id=' . (int) $item->id); ?>"
-                                    title="<?php echo Text::_('JACTION_EDIT'); ?> <?php echo $this->escape(addslashes($item->name)); ?>">
-		                            <?php //echo $editIcon; ?><?php echo $this->escape($item->name); ?></a>
+                                    title="<?php echo Text::_('JACTION_EDIT'); ?> <?php echo $this->escape(addslashes($item->actor_name)); ?>">
+		                            <?php //echo $editIcon; ?><?php echo $this->escape($item->actor_name); ?></a>
                                 </td>
                                  <td class="text-center d-none d-md-table-cell">
 	                                <?php echo $item->biography; ?>
                                 </td>
                                  <td class="text-center d-none d-md-table-cell">
-	                                <?php echo $item->events; ?>
+	                                <?php //echo $item->events; ?>
                                 </td>
  
                             </tr>

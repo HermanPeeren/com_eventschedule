@@ -83,10 +83,10 @@
 			</params>
 			</menu>
 			
-			<menu link="option=com_eventschedule&amp;view=event_types">COM_EVENTSCHEDULE_SUBMENUNAME_EVENT_TYPES
+			<menu link="option=com_eventschedule&amp;view=eventtypes">COM_EVENTSCHEDULE_SUBMENUNAME_EVENT_TYPES
 			<params>
 				<menu-quicktask-title>COM_EVENTSCHEDULE_SUBMENUNAME_EVENT_TYPES</menu-quicktask-title>
-				<menu-quicktask>index.php?option=com_eventschedule&amp;view=event_types</menu-quicktask>
+				<menu-quicktask>index.php?option=com_eventschedule&amp;view=eventTypes</menu-quicktask>
 			</params>
 			</menu>
 		</submenu>

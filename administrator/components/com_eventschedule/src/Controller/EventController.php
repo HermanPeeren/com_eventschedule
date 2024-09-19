@@ -51,18 +51,20 @@ class EventController extends FormController
         $data  = $this->input->post->get('jform', array(), 'array');
 
         // This is the usual call to set the state for preserving the form data entered by the user
-        $app->setUserState('com_eventschedule.edit.event', $data);
+        $app->setUserState('com_eventschedule.edit.event.data', $data);
 
-        $container_id = filter_var($data['container_id'], FILTER_SANITIZE_NUMBER_INT);
+        // In documentation container_id is explicitly put into user state, but: it is already in the event-data...
+        //$container_id = filter_var($data['container_id'], FILTER_SANITIZE_NUMBER_INT);
 
         // This is the call you need to make to pass the sql_filter ids to the SQL field
         // The first parameter must be `'<context>.filter'` where `context` is what you set
         // as the context= ... attribute of the SQL field
-        $app->setUserState('eventschedule.filter', array('container_id' => $container_id));
+        //$app->setUserState('eventschedule.filter', array('container_id' => $container_id));
 
         // Then re-present the form
         $model = $this->getModel('event');
         $view = $this->getView('event', 'html');
+        $view->setLayout('edit');
         $view->setModel($model, true);
 
         $view->display();
